@@ -23,6 +23,7 @@ db = file.choose()
 data = read_sav(db)
 
 data <- na.omit(data) # listwise deletion of missing
+data.res <- data[,2:10]
 data.class <- data[,11]
 
 #######################################
@@ -55,7 +56,8 @@ dev.new()
 plot(1:10, wss, type="b", xlab="Number of Clusters",
      ylab="Within groups sum of squares")
 
-fit <- eclust(data[,2:10], "hclust", k = 2, graph = FALSE)
+pf <- PCA(data.res,graph = FALSE)
+fit <- eclust(pf$ind$coord, "hclust", k = 2, graph = FALSE)
 clust_stats<-cluster.stats(d=dist(data[,2:10]), t(data[,11]), fit$cluster)
 # Corrected Rand index
 clust_stats$corrected.rand
@@ -65,7 +67,7 @@ clust_stats$vi
 table(t(data[,11]), fit$cluster)
 
 dev.new()
-fviz_dend(hclust(dist(data[,2:10])), k = 2, k_colors = c('red','blue'),  
+fviz_dend(hclust(dist(pf$ind$coord)), k = 2, k_colors = c('red','blue'),  
           as.ggplot = TRUE, show_labels = FALSE)
 
 
